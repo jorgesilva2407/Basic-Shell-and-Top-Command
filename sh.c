@@ -82,12 +82,24 @@ runcmd(struct cmd *cmd)
     break;
 
   case '>':
+    rcmd = (struct redircmd*)cmd;
+    /* MARK START task3
+     * TAREFA3: Implemente codigo abaixo para executar
+     * comando com redirecionamento. */
+    rcmd->fd = open(rcmd->file, rcmd->mode);
+    dup2(rcmd->fd, STDOUT_FILENO);
+    close(rcmd->fd);
+    /* MARK END task3 */
+    runcmd(rcmd->cmd);
+    break;
   case '<':
     rcmd = (struct redircmd*)cmd;
     /* MARK START task3
      * TAREFA3: Implemente codigo abaixo para executar
      * comando com redirecionamento. */
-    fprintf(stderr, "redir nao implementado\n");
+    rcmd->fd = open(rcmd->file, rcmd->mode);
+    dup2(rcmd->fd, STDIN_FILENO);
+    close(rcmd->fd);
     /* MARK END task3 */
     runcmd(rcmd->cmd);
     break;
