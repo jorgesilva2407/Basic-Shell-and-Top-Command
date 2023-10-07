@@ -86,7 +86,7 @@ runcmd(struct cmd *cmd)
     /* MARK START task3
      * TAREFA3: Implemente codigo abaixo para executar
      * comando com redirecionamento. */
-    r = open(rcmd->file, rcmd->mode);
+    r = open(rcmd->file, rcmd->mode, 0777); // 0777 para definir as permissões do arquivo
     dup2(r, STDOUT_FILENO);
     close(r);
     /* MARK END task3 */
