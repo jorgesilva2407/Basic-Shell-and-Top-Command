@@ -77,7 +77,7 @@ runcmd(struct cmd *cmd)
      * TAREFA2: Implemente codigo abaixo para executar
      * comandos simples. */
     execvp(ecmd->argv[0], ecmd->argv);
-    fprintf(stderr, "exec nao implementado\n");
+    // fprintf(stderr, "exec nao implementado\n");
     /* MARK END task2 */
     break;
 
@@ -86,9 +86,9 @@ runcmd(struct cmd *cmd)
     /* MARK START task3
      * TAREFA3: Implemente codigo abaixo para executar
      * comando com redirecionamento. */
-    rcmd->fd = open(rcmd->file, rcmd->mode);
-    dup2(rcmd->fd, STDOUT_FILENO);
-    close(rcmd->fd);
+    r = open(rcmd->file, rcmd->mode);
+    dup2(r, STDOUT_FILENO);
+    close(r);
     /* MARK END task3 */
     runcmd(rcmd->cmd);
     break;
@@ -109,7 +109,43 @@ runcmd(struct cmd *cmd)
     /* MARK START task4
      * TAREFA4: Implemente codigo abaixo para executar
      * comando com pipes. */
-    fprintf(stderr, "pipe nao implementado\n");
+
+    if (pipe(p) == -1){ // verifica se o pipe foi feito com sucesso
+      return;
+    }
+
+    int pid1 = fork();
+    if (pid1 < 0){ // verifica se o falhou
+      return;
+    }
+
+    if (pid1 == 0){
+      // processo filho
+      dup2(p[1], STDOUT_FILENO); // fd[1] é o lado de escrita do pipe -> transformado na saída do processo filho
+      close(p[0]); // fecha arquivo não usado
+      close(p[1]); // fecha arquivo não usado -> diferente do STDOUT_FILENO
+      runcmd(pcmd->left);
+    }
+
+    waitpid(pid1, NULL, 0); // espera encerramento do primeiro processo
+
+    int pid2 = fork();
+    if (pid2 < 0) { // verifica se o fork falhou
+      return;
+    }
+
+    if (pid2 == 0){
+      // processo filho
+      dup2(p[0], STDIN_FILENO); // fd[1] é o lado de leitura do pipe -> transformada na leitura do processo filho
+      close(p[0]); // fecha arquivo não usado
+      close(p[1]); // fecha arquivo não usado
+      runcmd(pcmd->right);
+    }
+
+    close(p[0]); // fecha arquvio na thread principal
+    close(p[1]); // fecha arquvio na thread principal
+
+    waitpid(pid2, NULL, 0); // espera encerramento do segundo processo
     /* MARK END task4 */
     break;
   }    

@@ -13,13 +13,14 @@ Preencha as linhas abaixo com o nome e o e-mail dos integrantes do
 grupo.  Substitua XX pela contribuição de cada membro do grupo no
 desenvolvimento do trabalho.
 
-Nome <email@domain.br> XX%
-Nome <email@domain.br> XX%
-Nome <email@domain.br> XX%
+Jorge Augusto de Lima e Silva <jorge.lima2407@gmail.com> Desenvolvimento das funções no shell que executam comandos simples, realiza o redirecionamento de entrada e saída e realiza o uso de pipes.
+Vitor Emanuel Ferreira Vital <email@domain.br> XX%
 
 3. Referências bibliográficas
 
-Adicione aqui as referências bibliográficas.
+Stack Overflow - how to write the output of a process run using execl to a file in c - Link: https://stackoverflow.com/questions/19732790/how-to-write-the-output-of-a-process-run-using-execl-to-a-file-in-c
+
+Youtube - Simulating the pipe "|" operator in C - Canal: CodeVault - Link: https://www.youtube.com/watch?v=6xbLgZpOBi8
 
 4. Estruturas de dados
 
