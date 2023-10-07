@@ -24,5 +24,8 @@ Youtube - Simulating the pipe "|" operator in C - Canal: CodeVault - Link: https
 
 4. Estruturas de dados
 
-Descreva e justifique as estruturas de dados e algoritmos utilizados
-em sua solução.
+Task 2: A solução desta tarefa foi feita simplesmente chamando o comando execvp da família de comandos exec. Foi escolhido o execvp ao invés dos outros comandos uma vez que este trata de forma nativa a passagem de parâmetros na forma de um array, que é justamente a forma como os argumentos na struct execcmd estão estruturados.
+
+Task 3: O redirecionamento de entrada e saída foi abrindo o arquivo de no modo informado pela variável mode da struct redircmd. Depois que o arquivo foi aberto, este foi indicado como sendo o arquivo padrão de entrada ou saída, dependendo do contexto, usando o comando dup2 e as variáveis STDIN_FILENO e STDOUT_FILENO.
+
+Task 4: Os pipes, por sua vez, foram implementados da seguinte forma. Primeiro de tudo foi criado um pipe com a variável p, onde p[0] é o lado de leitura do pipe e p[1] o lado de escrita. Em seguida, foi feito um fork no processo principal que executa o primeiro comando do pipe e redireciona sua saída para o lado de escrita do pipe. Terminado esse subprocesso, realizamos um novo fork no processo principal, do qual redirecionamos sua entrada para corresponder com o lado de leitura do pipe. Terminado esse subprocesso, voltamos ao processo principal, fechamos os arquivos do pipe e o comando retorna.
