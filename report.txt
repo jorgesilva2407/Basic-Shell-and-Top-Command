@@ -14,7 +14,7 @@ grupo.  Substitua XX pela contribuição de cada membro do grupo no
 desenvolvimento do trabalho.
 
 Jorge Augusto de Lima e Silva <jorge.lima2407@gmail.com> Desenvolvimento das funções no shell que executam comandos simples, realiza o redirecionamento de entrada e saída e realiza o uso de pipes.
-Vitor Emanuel Ferreira Vital <email@domain.br> XX%
+Vitor Emanuel Ferreira Vital <vitoremanuelg147@gmail.com> Implementação do programa que imprime processos que estão sendo executados em sequência (meutop).
 
 3. Referências bibliográficas
 
@@ -24,8 +24,36 @@ Youtube - Simulating the pipe "|" operator in C - Canal: CodeVault - Link: https
 
 4. Estruturas de dados
 
+# Parte 1
+
 Task 2: A solução desta tarefa foi feita simplesmente chamando o comando execvp da família de comandos exec. Foi escolhido o execvp ao invés dos outros comandos uma vez que este trata de forma nativa a passagem de parâmetros na forma de um array, que é justamente a forma como os argumentos na struct execcmd estão estruturados.
 
 Task 3: O redirecionamento de entrada e saída foi abrindo o arquivo de no modo informado pela variável mode da struct redircmd. Depois que o arquivo foi aberto, este foi indicado como sendo o arquivo padrão de entrada ou saída, dependendo do contexto, usando o comando dup2 e as variáveis STDIN_FILENO e STDOUT_FILENO.
 
 Task 4: Os pipes, por sua vez, foram implementados da seguinte forma. Primeiro de tudo foi criado um pipe com a variável p, onde p[0] é o lado de leitura do pipe e p[1] o lado de escrita. Em seguida, foi feito um fork no processo principal que executa o primeiro comando do pipe e redireciona sua saída para o lado de escrita do pipe. Terminado esse subprocesso, realizamos um novo fork no processo principal, do qual redirecionamos sua entrada para corresponder com o lado de leitura do pipe. Terminado esse subprocesso, voltamos ao processo principal, fechamos os arquivos do pipe e o comando retorna.
+
+# Parte 2
+
+A solução para a segunda parte do TP foi desenvolvida no arquivo meutop.c. 
+Para os vinte primeiros processos contidos na pasta /proc/ foram obtidos:
+    PID - identificador do processo
+    User - usuário que esta executando o programa
+    PROCNAME - nome do processo
+    Estado - o estado do processo
+Com tal finalidade, três estruturas foram utilizadas a dirent, a stat e a passwd das bibliotecas dirent.h, sys/stat.h e pwd.h respectivamente.
+A estrutura dirent permite a identificação dos processos em andamento, para que a partir deles consigamos obter as informações necessárias.
+A estrutura stat permite a identificação do usuário que está executando o precesso, para isso ela obtem o identificador de usuário(uid) e com base nele
+envia para a estrutura passwd para que obtenhamos o nome do usuário em questão.
+A estrutura passwd conforme supracitado é utilizada para obtermos o nome do usuário a partir do identificador de usuário.
+
+Além dos processos obtidos anteriormente, foram retirados dois outros dados relevantes, com base no arquivo /status presente nos diretórios especiais de cada processo,
+o nome do processo e o estado atual dele. O nome do processo é precedido, em /status, por "Name:" e, a partir disso, podemos fazer uma busca pelo texto e obter a string que
+sucede "Name:" com isso obtermos o PROCNAME. Por fim, prosseguindo com a busca pelo file hand podemos encontrar o estado do processo que é o caractere precedido por "State:"
+A partir disso conseguimos preencher a tabela com os dados necessários para "meutop.c".
+
+A tabela gerada imprime somente os vinte primeiros processos em execução identificados, utiliza-se para isso a ordem crescente dos PIDs. A cada um segundo a lista é atualizada
+e então a tabela é regenerada com os novos vinte primeiros processos em andamento.
+
+Concomitante à tabela, é também desenvolvida uma função de envio de sinais. Nessa etapa, é obtida pela linha de comando dois inteiros, o PID e o sinal a ser enviado, o sinal toma
+como base as regras descritas em [https://linux.die.net/man/2/kill], isso porque utilizamos a função kill da biblioteca signal.h para envio de mensagens para um processo.
+A partir disso, Imprimimos uma mensagem de êxito no caso da mensagem sig ser enviada a PID e uma de erro caso contrário.
