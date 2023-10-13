@@ -13,8 +13,8 @@ Preencha as linhas abaixo com o nome e o e-mail dos integrantes do
 grupo.  Substitua XX pela contribuição de cada membro do grupo no
 desenvolvimento do trabalho.
 
-Jorge Augusto de Lima e Silva <jorge.lima2407@gmail.com> Desenvolvimento das funções no shell que executam comandos simples, realiza o redirecionamento de entrada e saída e realiza o uso de pipes.
-Vitor Emanuel Ferreira Vital <vitoremanuelg147@gmail.com> Implementação do programa que imprime processos que estão sendo executados em sequência (meutop).
+Jorge Augusto de Lima e Silva <jorge.lima2407@gmail.com> 50%
+Vitor Emanuel Ferreira Vital <vitoremanuelg147@gmail.com> 50%
 
 3. Referências bibliográficas
 
