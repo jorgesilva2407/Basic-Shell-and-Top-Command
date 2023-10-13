@@ -8,6 +8,7 @@
 #include <pwd.h>
 #include <ctype.h>
 #include <signal.h>
+#include <pthread.h>
 
 #define MAX_PROCESSES 20
 #define SLEEP_TIME 1
@@ -112,20 +113,34 @@ void print_process(struct process p){
     printf("%-5d | %-8s | %-12s | %-2c\n", p.pid, p.user, p.proc_name, p.state);
 }
 
+pthread_mutex_t screen = PTHREAD_MUTEX_INITIALIZER;
+
 void print_processes() {
-  processes_inicialization(MAX_PROCESSES);
-  print_top();
-  getProcesses();
+    processes_inicialization(MAX_PROCESSES);
+
+    pthread_mutex_lock( &screen );
+    printf("\033[2J\033[H"); // Clears the screen from the current line (2J) and moves the cursor to the top (H).
+
+    print_top();
+    getProcesses();
   
-  for(int i = 0; i < MAX_PROCESSES; i++){
-    print_process(processes[i]);
-  }
+    for(int i = 0; i < MAX_PROCESSES; i++){
+        print_process(processes[i]);
+    }
+
+    printf("Pressione <enter> para entra no modo de execução de comandos");
+    fflush(stdout);
+    pthread_mutex_unlock( &screen );
 }
 
 void send_signal(){
     char input[256];
+    char aux[10];
     int pid, sig;
+    fgets(aux, 10, stdin);
     
+    pthread_mutex_lock( &screen );
+    printf("> ");
     if (fgets(input, sizeof(input), stdin) != NULL) {
         if (sscanf(input, "%d %d", &pid, &sig) == 2) {
             if (kill(pid, sig) == 0) {
@@ -139,15 +154,40 @@ void send_signal(){
     } else {
         printf("Failed to read input.\n");
     }
+    pthread_mutex_unlock( &screen );
+}
+
+void* continuos_print(){
+    while (1) {
+        print_processes();
+        sleep(SLEEP_TIME);
+    }
+    return NULL;
+}
+
+void* continuous_signal(){
+    while (1) {
+        send_signal();
+    }
+    
+    return NULL;
 }
 
 int main() {
+    pthread_t process_print, signal_send;
     
-    while (1) {
-        print_processes();
-        send_signal();
-        sleep(SLEEP_TIME);
+    if (pthread_create(&process_print, NULL, continuos_print, NULL) != 0){
+        printf("Failed to create print thread\n");
+        exit(EXIT_FAILURE);
     }
+
+    if (pthread_create(&signal_send, NULL, continuous_signal, NULL) != 0){
+        printf("Failed to create signal thread\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    pthread_join(process_print, NULL);
+    pthread_join(signal_send, NULL);
 
     return EXIT_SUCCESS;
 }

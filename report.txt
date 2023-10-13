@@ -20,8 +20,6 @@ Vitor Emanuel Ferreira Vital <vitoremanuelg147@gmail.com> Implementação do pro
 
 Stack Overflow - how to write the output of a process run using execl to a file in c - Link: https://stackoverflow.com/questions/19732790/how-to-write-the-output-of-a-process-run-using-execl-to-a-file-in-c
 
-Youtube - Simulating the pipe "|" operator in C - Canal: CodeVault - Link: https://www.youtube.com/watch?v=6xbLgZpOBi8
-
 4. Estruturas de dados
 
 # Parte 1
@@ -57,3 +55,10 @@ e então a tabela é regenerada com os novos vinte primeiros processos em andame
 Concomitante à tabela, é também desenvolvida uma função de envio de sinais. Nessa etapa, é obtida pela linha de comando dois inteiros, o PID e o sinal a ser enviado, o sinal toma
 como base as regras descritas em [https://linux.die.net/man/2/kill], isso porque utilizamos a função kill da biblioteca signal.h para envio de mensagens para um processo.
 A partir disso, Imprimimos uma mensagem de êxito no caso da mensagem sig ser enviada a PID e uma de erro caso contrário.
+
+Como forma de atualizar as tabelas e receber inputs ao mesmo tempo foram usadas duas threads, a primeira que fica resposável pela parte de coletar os dados dos processos e
+imprimí-los, e a segunda que é reponsável pela leitura de inputs e envio de sinais. Uma vez que a entrada e saída são compartilhadas no mesmo terminal, foi necessário o uso
+de alguma forma de sincronização para tratar deste recurso compartilhado. O método escolhido foram os mutexes, implementados na própria biblioteca pthreads. Desta forma, no
+quando a thread que vai imprimir os processos no terminal está na fase de imprimir, esta vai travar o acesso da outra thread ao recurso. A outra thread por sua vez só começa
+utilizar a tela depois que o usuário passa o <enter> como input, sendo tudo que ele escreveu antes do <enter> desconsiderado. Uma vez que essa thread começa a utilizar a tela,
+a tabela fica congelada até que um comando seja passado ao processador de sinais, e uma vez que o comando é passado, a tabela volta a ser atualizada.
