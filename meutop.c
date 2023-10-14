@@ -140,7 +140,7 @@ void send_signal(){
     fgets(aux, 10, stdin);
     
     pthread_mutex_lock( &screen );
-    printf("> ");
+    printf("insira o PID e o sinal > ");
     if (fgets(input, sizeof(input), stdin) != NULL) {
         if (sscanf(input, "%d %d", &pid, &sig) == 2) {
             if (kill(pid, sig) == 0) {
@@ -154,6 +154,7 @@ void send_signal(){
     } else {
         printf("Failed to read input.\n");
     }
+    sleep(SLEEP_TIME);
     pthread_mutex_unlock( &screen );
 }
 

@@ -62,3 +62,7 @@ de alguma forma de sincronização para tratar deste recurso compartilhado. O m�
 quando a thread que vai imprimir os processos no terminal está na fase de imprimir, esta vai travar o acesso da outra thread ao recurso. A outra thread por sua vez só começa
 utilizar a tela depois que o usuário passa o <enter> como input, sendo tudo que ele escreveu antes do <enter> desconsiderado. Uma vez que essa thread começa a utilizar a tela,
 a tabela fica congelada até que um comando seja passado ao processador de sinais, e uma vez que o comando é passado, a tabela volta a ser atualizada.
+
+Para compilar o "meutop.c" é necessário incluir a tag "-pthread", resultando em "gcc meutop.c -o meutop -pthread".
+Como citado, a tabela é gerada e para envio de uma mensagem basta apertar <enter> para entrar no modo execução de comando. Dentro desse modo, é possível mandar o sinal fornecendo
+"PID sinal" as mensagens de erro ou sucesso são então emitidas e ficam amostra por um segundo, antes que a nova tabela seja emitida. 
